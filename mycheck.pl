@@ -9,24 +9,16 @@ use Net::Ping;
     
 my $file       = $ARGV[0];
 my $config     = LoadFile($file);
-my $hostnam1   = $config->{checks}->{ping}->{google};
-my $hostnam2   = $config->{checks}->{ping}->{mysite};
-my $temp       = 0;
 my $png        = Net::Ping->new('icmp');
+my $temp;
 
-if ( $png->ping($hostnam1) ) {
-	       print " V ", $hostnam1 ,"\n";
-	       $temp = 1;
-}
-if ( $temp eq 0) {
-	       print "\n X ", $hostnam1 ,"\n";
-}
-$temp	       = 0;
-
-if ( $png->ping($hostnam2) ) {
-               print " V ", $hostnam2 ,"\n";
-               $temp = 1;
-}
-if ( $temp eq 0) {
-               print "\n X ", $hostnam2 ,"\n";
+for (keys %{$config->{checks}->{ping}}) {
+        $temp = 0;
+        if( $png->ping($config->{checks}->{ping}->{$_}) ) {
+                say "V $_ ";
+                $temp = 1;
+        }
+        if ( $temp eq 0) {
+                say "X $_ ";
+        }
 }
